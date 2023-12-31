@@ -6,9 +6,19 @@ import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.time.Duration
 
-fun firstChapter(driver: ChromeDriver){
+val firstChapterXPathList = listOf(
+    "//*[@id=\"fs-chapters\"]/div/div[3]/a[1]",
+    "",
+)
+
+
+
+fun firstChapter(
+    driver: ChromeDriver,
+    index: Int,
+    ){
     WebDriverWait(driver, Duration.ofSeconds(5)).until(
         ExpectedConditions
-            .presenceOfElementLocated(By.xpath("//*[@id=\"fs-chapters\"]/div/div[3]/a[1]"))
+            .presenceOfElementLocated(By.xpath(firstChapterXPathList[index]))
     ).click()
 }

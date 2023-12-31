@@ -6,9 +6,17 @@ import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.time.Duration
 
-fun nextChapter(driver: ChromeDriver){
+val nextChapterXPathList = listOf(
+    "//*[@id=\"next\"]",
+    "",
+)
+
+fun nextChapter(
+    driver: ChromeDriver,
+    index: Int,
+){
     WebDriverWait(driver, Duration.ofSeconds(5)).until(
         ExpectedConditions
-            .presenceOfElementLocated(By.xpath("//*[@id=\"next\"]"))
+            .presenceOfElementLocated(By.xpath(nextChapterXPathList[index]))
     ).click()
 }

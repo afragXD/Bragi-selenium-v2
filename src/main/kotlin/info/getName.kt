@@ -14,23 +14,34 @@ import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.time.Duration
 
+val nameXPathList = listOf(
+        "/html/body/div[1]/div/div/div[2]/div/article/main/div[1]/div/div[1]/h1",
+        "",
+        )
+
+val nameEnXPathList = listOf(
+    "/html/body/div[1]/div/div/div[2]/div/article/main/div[1]/div/div[1]/h1",
+    "",
+)
 
 fun getName(
-    driver: ChromeDriver
+    driver: ChromeDriver,
+    index: Int,
 ):String{
     val name = WebDriverWait(driver, Duration.ofSeconds(5)).until(
         ExpectedConditions
-            .presenceOfElementLocated(By.xpath("/html/body/div[1]/div/div/div[2]/div/article/main/div[1]/div/div[1]/h1"))
+            .presenceOfElementLocated(By.xpath(nameXPathList[index]))
     ).text
     return name.split("\n")[0]
 }
 
 fun getEnName(
-    driver: ChromeDriver
+    driver: ChromeDriver,
+    index: Int,
 ):String{
     var name = WebDriverWait(driver, Duration.ofSeconds(5)).until(
         ExpectedConditions
-            .presenceOfElementLocated(By.xpath("/html/body/div[1]/div/div/div[2]/div/article/main/div[1]/div/div[1]/h1"))
+            .presenceOfElementLocated(By.xpath(nameEnXPathList[index]))
     ).text
     name = name.split("\n")[1].trimStart('•').split("•")[0].trim()
 

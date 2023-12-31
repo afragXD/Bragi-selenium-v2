@@ -14,8 +14,9 @@ data class BookDTO(
     val author: String,
 
     val ratingCount: Int,
-    val translator: String,
-    val genres: Set<String>
+    //val translator: String,
+    val genres: Set<String>,
+    val country: String
 
     )
 

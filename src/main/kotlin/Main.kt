@@ -1,6 +1,6 @@
-import clicker.antiBot
 import clicker.firstChapter
 import clicker.nextChapter
+import clicker.startDriver
 import com.datastax.oss.driver.api.core.CqlSession
 import info.*
 import kotlinx.coroutines.delay
@@ -14,9 +14,27 @@ import java.net.InetSocketAddress
 import java.util.UUID
 
 
+fun getSiteRank(link: String): Int {
+    val ranobeLibPattern = "ranobelib".toRegex()
+    val ranobeHubPattern = "ranobehub".toRegex()
+    val ranobeSPattern = "ranobes".toRegex()
+
+    return when {
+        ranobeHubPattern.containsMatchIn(link) -> 2
+        ranobeLibPattern.containsMatchIn(link) -> 1
+        ranobeSPattern.containsMatchIn(link) -> 0
+        else -> -1 // Возвращаем -1 для несоответствующих ссылок
+    }
+}
+
 val url = listOf(
     //"https://ranobes.com/ranobe/5951-a-will-eternal.html",
-    "https://ranobes.com/ranobe/151884-the-beginning-after-the-end.html"
+    //"https://ranobes.com/ranobe/305-i-shall-seal-the-heavens.html"
+    "https://ranobes.com/ranobe/347689-douluo-dalu-2-unrivaled-tang-sect.html"
+)
+
+val urlFirstChapter = listOf(
+    ""
 )
 
 const val insertBook = """
@@ -32,8 +50,8 @@ const val insertBook = """
             year,
             author,
             rating_count,
-            translator,
-            genres
+            genres,
+            country
         )
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """
@@ -54,6 +72,10 @@ fun main() {
 
 fun getData(){
 
+    val nowUrl = url[0]
+
+    val urlIndex = getSiteRank(nowUrl)
+
     val session = CqlSession.builder()
         .withKeyspace("Bragi")
         .addContactPoint(InetSocketAddress("127.0.0.1", 9042))
@@ -69,21 +91,22 @@ fun getData(){
     val driver = ChromeDriver(options)
 
     try {
-        antiBot(driver = driver, url = url[0])
+        startDriver(driver = driver, url = nowUrl, urlIndex)
 
         val bookDTO = BookDTO(
-            name = getName(driver),
-            enName = getEnName(driver),
-            image = getImg(driver),
-            description = getDescription(driver),
-            rating = getRating(driver),
-            status = getStatus(driver),
-            chapters = getChapters(driver),
-            year = getYear(driver),
-            author = getAuthor(driver),
-            ratingCount = getRatingCount(driver),
-            translator = getTranslator(driver),
-            genres = getGenres(driver)
+            name = getName(driver, urlIndex),
+            enName = getEnName(driver, urlIndex),
+            image = getImg(driver, urlIndex),
+            description = getDescription(driver, urlIndex),
+            rating = getRating(driver, urlIndex),
+            status = getStatus(driver, urlIndex),
+            chapters = getChapters(driver, urlIndex),
+            year = getYear(driver, urlIndex),
+            author = getAuthor(driver, urlIndex),
+            ratingCount = getRatingCount(driver, urlIndex),
+            //translator = getTranslator(driver, urlIndex),
+            genres = getGenres(driver, urlIndex),
+            country = getCountry(driver, urlIndex)
         )
         println(bookDTO)
 
@@ -101,17 +124,18 @@ fun getData(){
             bookDTO.year,
             bookDTO.author,
             bookDTO.ratingCount,
-            bookDTO.translator,
+            //bookDTO.translator,
             bookDTO.genres,
+            bookDTO.country
         )
 
-        firstChapter(driver)
+        firstChapter(driver, urlIndex)
         for (i in 1..bookDTO.chapters){
             val chapterDTO = ChapterDTO(
                 chapterNumber = i,
-                chapterName = getChapterName(driver),
+                chapterName = getChapterName(driver, urlIndex),
                 bookId = uuid,
-                chapterText = getChapterText(driver)
+                chapterText = getChapterText(driver, urlIndex)
             )
             session.execute(
                 insertChar,
@@ -120,24 +144,10 @@ fun getData(){
                 chapterDTO.bookId,
                 chapterDTO.chapterText
             )
-            nextChapter(driver)
+            nextChapter(driver, urlIndex)
         }
     }finally {
         session.close()
         driver.quit()
     }
 }
-
-
-//println(getName(driver))
-//println(getEnName(driver))
-//println(getImg(driver))
-//println(getDescription(driver))
-//println(getRating(driver))
-//println(getStatus(driver))
-//println(getChapters(driver))
-//println(getYear(driver))
-//println(getAuthor(driver))
-//println(getRatingCount(driver))
-//println(getTranslator(driver))
-//println(getGenres(driver))

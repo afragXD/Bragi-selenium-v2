@@ -6,11 +6,20 @@ import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.time.Duration
 
+val ratingXPathList = listOf(
+    "//*[@id=\"rate_b\"]/div/div/div/span[1]",
+    "",
+)
+
 fun getRating(
-    driver: ChromeDriver
+    driver: ChromeDriver,
+    index: Int,
 ): Float {
-    return WebDriverWait(driver, Duration.ofSeconds(5)).until(
+    var rating = WebDriverWait(driver, Duration.ofSeconds(5)).until(
         ExpectedConditions
-            .presenceOfElementLocated(By.xpath("//*[@id=\"rate_b\"]/div/div/div/span[1]"))
+            .presenceOfElementLocated(By.xpath(ratingXPathList[index]))
     ).text.toFloat()
+    if (index==0)
+        rating *= 2
+    return rating
 }

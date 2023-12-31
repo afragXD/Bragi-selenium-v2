@@ -6,11 +6,17 @@ import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.time.Duration
 
+val chapterNameXPathList = listOf(
+    "//*[@id=\"dle-content\"]/article/div[2]/h1",
+    "",
+)
+
 fun getChapterName(
-    driver: ChromeDriver
+    driver: ChromeDriver,
+    index: Int,
 ): String {
     return WebDriverWait(driver, Duration.ofSeconds(5)).until(
         ExpectedConditions
-            .presenceOfElementLocated(By.xpath("//*[@id=\"dle-content\"]/article/div[2]/h1"))
+            .presenceOfElementLocated(By.xpath(chapterNameXPathList[index]))
     ).text.split('\n')[0]
 }

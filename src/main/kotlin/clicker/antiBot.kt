@@ -6,14 +6,20 @@ import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.time.Duration
 
-fun antiBot(
+fun startDriver(
     driver: ChromeDriver,
-    url:String
+    url:String,
+    index: Int,
 ){
-    //By.ByXPath("//*[@id=\"content\"]/div")
     driver.get(url)
-    WebDriverWait(driver, Duration.ofSeconds(5)).until(
-        ExpectedConditions
-            .presenceOfElementLocated(By.xpath("//*[@id=\"content\"]/div"))
-    ).click()
+    if (index == 0) {
+        try {
+            WebDriverWait(driver, Duration.ofSeconds(5)).until(
+                ExpectedConditions
+                    .presenceOfElementLocated(By.xpath("//*[@id=\"content\"]/div"))
+            ).click()
+        }catch (e:Exception){
+            println(e)
+        }
+    }
 }
